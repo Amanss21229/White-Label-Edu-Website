@@ -1,0 +1,259 @@
+Act as a senior full-stack web developer and education-platform architect.
+
+I want to build a dedicated website ONLY for one offline coaching program
+run by SANSA LEARN, Patna.
+
+This website is NOT a generic coaching site.
+It is only for one specific program called:
+
+"FREE CONCEPT FOUNDATION PROGRAM"
+
+-----------------------------------
+PROGRAM DETAILS
+-----------------------------------
+
+Program Name:
+FREE CONCEPT FOUNDATION PROGRAM
+
+Conducted By:
+SANSA LEARN – Offline Coaching Classes
+
+Program Type:
+Offline | Classroom based
+
+Location:
+Chandmari Road, Kankarbagh, Patna
+(Opposite Gali No. 06)
+
+Contact Numbers:
+9296820840
+9153021229
+
+Duration:
+15 Days (2 Weeks)
+
+Fees:
+100% FREE (No hidden charges)
+
+Batch Capacity:
+Only 20 students per batch
+(First come, first serve)
+
+Subjects Covered:
+• Mathematics
+• Science
+• English Grammar
+
+Teaching Model:
+Different subject teachers for each subject
+(No energy burnout for students)
+
+Academic Guidance Under:
+Dr. Manisha Kumari
+(Head – Sansa Learn)
+Free test series at the end of batch.
+-----------------------------------
+CLASS-WISE DAILY ROUTINE (VERY IMPORTANT)
+-----------------------------------
+
+The following routine must be used everywhere
+(Website display + PDF + Admin panel):
+
+CLASS 11th  
+Time: 1:00 PM – 2:00 PM  
+Monday to Saturday: Science
+
+CLASS 12th  
+Time: 2:00 PM – 3:00 PM  
+Monday to Saturday: Science
+
+CLASS 9th  
+Time: 3:00 PM – 4:00 PM  
+Monday & Tuesday: Science  
+Wednesday & Thursday: Mathematics  
+Friday & Saturday: English Grammar  
+
+CLASS 5th  
+Time: 4:00 PM – 5:00 PM  
+Monday & Tuesday: Mathematics  
+Wednesday & Thursday: English Grammar  
+Friday & Saturday: Science  
+
+CLASS 6th  
+Time: 5:00 PM – 6:00 PM  
+Monday & Tuesday: English Grammar  
+Wednesday & Thursday: Science  
+Friday & Saturday: Mathematics  
+
+CLASS 7th  
+Time: 6:00 PM – 7:00 PM  
+Monday & Tuesday: Science  
+Wednesday & Thursday: Mathematics  
+Friday & Saturday: English Grammar  
+
+CLASS 8th  
+Time: 7:00 PM – 8:00 PM  
+Monday & Tuesday: Mathematics  
+Wednesday & Thursday: English Grammar  
+Friday & Saturday: Science  
+
+CLASS 10th  
+Time: 7:30 PM – 8:30 PM  
+Monday & Tuesday: English Grammar  
+Wednesday & Thursday: Science  
+Friday & Saturday: Mathematics  
+
+-----------------------------------
+WEBSITE REQUIREMENTS
+-----------------------------------
+
+Frontend:
+HTML, CSS, JavaScript  
+Mobile-first, clean, black & white printable friendly UI
+
+Backend:
+Node.js + Express
+
+Database:
+Neon PostgreSQL
+
+-----------------------------------
+WEBSITE STRUCTURE
+-----------------------------------
+
+1️⃣ LANDING PAGE
+
+Center content:
+BIG HEADING:
+"FREE CONCEPT FOUNDATION PROGRAM"
+
+Below:
+"SANSA LEARN – Offline Coaching Classes"
+
+Below:
+Large 3D-style SANSA LEARN logo (placeholder)
+
+Top-Right:
+• Dark / Light mode toggle
+• Language toggle (Hindi / English)
+
+Bottom:
+Two 3d buttons:
+
+[ What is Free Concept Foundation Program? ]
+[ Register For Free ]
+
+-----------------------------------
+2️⃣ PROGRAM DETAILS PAGE
+
+Show clearly:
+• What this program is
+• Why concept foundation is important
+• Subjects included
+• Class-wise routine summary
+• Duration – 15 days
+• 100% FREE
+• Limited seats – only 20 students
+• Location & contact numbers
+• Teaching under Dr. Manisha Kumari
+• Free test at the end of batch
+At bottom:
+BIG BUTTON:
+[ REGISTER FOR FREE ]
+
+-----------------------------------
+3️⃣ REGISTRATION FORM PAGE
+
+Form fields:
+
+• Student Name
+• Gender
+• Class
+• Father's Name
+• Mother's Name
+• Parent WhatsApp Number
+• Parent Mobile Number
+• Alternate Mobile Number (Optional)
+• Address
+Submit Button:
+[ Submit Registration ]
+
+-----------------------------------
+ON FORM SUBMISSION
+-----------------------------------
+
+• Save data into Neon PostgreSQL
+• Create individual student profile
+• Generate a PDF containing:
+  - Student details
+  - Program name
+  - Class timing
+  - Class-wise routine
+  - Batch duration
+  - SANSA LEARN branding
+
+• Redirect to Thank You page:
+"Your registration is successfully submitted"
+
+• Thank you for registering for Free Concept Foundation Program
+• 📞 Contact: 9296820840 | 9153021229
+• 📍 Location: Chandmari Road, Kankarbagh, Patna (Opposite of Gali No. 06)
+• Line: For any query, feel free to visit our coaching
+-----------------------------------
+ADMIN PANEL (PASSWORD PROTECTED)
+-----------------------------------
+
+Admin features:
+
+• Total registrations count
+• Live update on new registration
+• View full student profiles
+• Delete any student
+• Download all registrations:
+  - CSV
+  - Excel
+• Filter by class
+• Open WhatsApp chat for each student
+
+-----------------------------------
+WHATSAPP BUTTON FUNCTION
+-----------------------------------
+
+When admin clicks WhatsApp button,
+open WhatsApp with pre-written message:
+
+"Your registration is successfully submitted.
+Click below to download your form 👇"
+
+Below message:
+• Link to student PDF
+• Link to class routine PDF (based on class)
+
+-----------------------------------
+DATABASE STRUCTURE
+-----------------------------------
+
+Table: registrations
+
+Fields:
+• id
+• student_name
+• gender
+• class
+• father_name
+• mother_name
+• whatsapp_number
+• alternate_number
+• address
+• created_at
+
+-----------------------------------
+FINAL INSTRUCTIONS
+-----------------------------------
+
+• Build exactly as described
+• No extra features
+• Clean and readable code
+• Ready to deploy on Replit
+• Admin password configurable
+• Explain setup steps clearly

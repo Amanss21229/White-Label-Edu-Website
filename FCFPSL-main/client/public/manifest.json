@@ -1,0 +1,26 @@
+{
+  "name": "Your Institute",
+  "short_name": "Institute",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "/branding/logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en",
+  "orientation": "any",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "id": "/",
+  "description": "Student registration and management portal"
+}
