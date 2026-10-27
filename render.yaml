@@ -35,3 +35,14 @@ services:
         value: ""
       - key: PROGRAM_NAME
         value: "Student Registration Program"
+
+      - key: BRAND_WHATSAPP_URL
+        value: ""
+      - key: BRAND_YOUTUBE_URL
+        value: ""
+      - key: BRAND_INSTAGRAM_URL
+        value: ""
+      - key: BRAND_TELEGRAM_URL
+        value: ""
+      - key: BRAND_HERO_MEDIA
+        value: "[]"
