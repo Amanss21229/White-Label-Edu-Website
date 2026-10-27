@@ -162,14 +162,30 @@ def init_db():
 init_db()
 
 def generate_admission_number():
-    conn = get_db()
-    cursor = conn.cursor()
+    """Generate an unused admission number using the configured prefix.
+
+    Use the configured prefix (default ST) consistently and check existing
+    records rather than relying on COUNT(), which can reuse numbers after
+    deletions or collide with imported records.
+    """
     year = datetime.now().year
-    cursor.execute('SELECT COUNT(*) FROM students WHERE admission_number LIKE %s', (f'SL{year}%',))
-    count = cursor.fetchone()[0]
-    conn.close()
-    prefix = os.environ.get('ADMISSION_PREFIX', 'ST')
-    return f'{prefix}{year}{str(count + 1).zfill(4)}'
+    prefix = (os.environ.get('ADMISSION_PREFIX', 'ADM') or 'ADM').strip()
+    conn = get_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT admission_number FROM students WHERE admission_number LIKE %s",
+            (f'{prefix}{year}%',)
+        )
+        used = {row[0] for row in cursor.fetchall()}
+        number = 1
+        while True:
+            candidate = f'{prefix}{year}{number:04d}'
+            if candidate not in used:
+                return candidate
+            number += 1
+    finally:
+        conn.close()
 
 def ensure_fee_records(student_id, admission_date, fee_per_month, discount=0.0):
     if not admission_date:
@@ -1659,7 +1675,7 @@ def public_student_profile(admission_number, token):
     
     c.save()
     
-    return send_file(filepath, as_attachment=True)
+    return send_file(filepath, mimetype='application/pdf', as_attachment=True, download_name=filename)
 
 @app.route('/export/students')
 @login_required
