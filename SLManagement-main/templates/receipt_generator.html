@@ -124,7 +124,11 @@ function loadStudentFees(studentId) {
     selectedFeeIds.clear();
 
     fetch(`/api/student-fee-months/${studentId}`)
-        .then(r => r.json())
+        .then(async r => {
+            const data = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
+            return data;
+        })
         .then(data => {
             document.getElementById('loadingMsg').classList.add('d-none');
             if (data.error) {
@@ -134,9 +138,9 @@ function loadStudentFees(studentId) {
             currentStudentData = data;
             renderFeeMonths(data);
         })
-        .catch(() => {
+        .catch((error) => {
             document.getElementById('loadingMsg').classList.add('d-none');
-            alert('Failed to load student data. Please try again.');
+            alert(error?.message || 'Failed to load student data. Please try again.');
         });
 }
 
