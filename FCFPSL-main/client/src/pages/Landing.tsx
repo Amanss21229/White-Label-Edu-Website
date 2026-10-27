@@ -131,28 +131,60 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode, title: stri
 
 function socialButtons(links: Record<string, string>) {
   const items = [
-    { key: "whatsapp", label: "WhatsApp", Icon: MessageCircle },
-    { key: "youtube", label: "YouTube", Icon: Youtube },
-    { key: "instagram", label: "Instagram", Icon: Instagram },
-    { key: "telegram", label: "Telegram", Icon: Send },
+    { key: "whatsapp", label: "WhatsApp", Icon: MessageCircle, color: "bg-[#25D366]", text: "text-white" },
+    { key: "youtube", label: "YouTube", Icon: Youtube, color: "bg-[#FF0000]", text: "text-white" },
+    { key: "instagram", label: "Instagram", Icon: Instagram, color: "bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#FCAF45]", text: "text-white" },
+    { key: "telegram", label: "Telegram", Icon: Send, color: "bg-[#229ED9]", text: "text-white" },
   ];
-  return items.map(({ key, label, Icon }) => links[key] ? <a key={key} href={links[key]} target="_blank" rel="noreferrer" aria-label={label} title={label} className="inline-flex items-center justify-center h-11 w-11 border-2 border-golden hover:bg-golden hover:text-black transition-colors"><Icon size={21} /></a> : <span key={key} title={`${label}: add ${key.toUpperCase()} URL in Render environment`} className="inline-flex items-center justify-center h-11 w-11 border-2 border-golden/40 text-muted-foreground"><Icon size={21} /></span>);
+  return items.map(({ key, label, Icon, color, text }) => {
+    const commonClass = `inline-flex items-center justify-center h-11 w-11 rounded-xl ${color} ${text} shadow-md hover:scale-110 hover:shadow-lg transition-all duration-200`;
+    return links[key] ? (
+      <a key={key} href={links[key]} target="_blank" rel="noreferrer" aria-label={label} title={label} className={commonClass}>
+        <Icon size={23} strokeWidth={2.5} />
+      </a>
+    ) : (
+      <span key={key} title={`${label}: add ${key.toUpperCase()} URL in Render environment`} aria-label={label} className={`${commonClass} opacity-60`}>
+        <Icon size={23} strokeWidth={2.5} />
+      </span>
+    );
+  });
 }
 
 function HeroMedia({ items }: { items: Array<{type?: string; url: string; link?: string}> }) {
   const [index, setIndex] = useState(0);
   const validItems = Array.isArray(items) ? items.filter((item) => item && item.url).slice(0, 10) : [];
-  const current = validItems[index];
+  const current = validItems.length ? validItems[index % validItems.length] : undefined;
+
   useEffect(() => {
-    if (!current || current.type === "video") return;
+    if (!current || current.type === "video" || validItems.length < 2) return;
     const timer = window.setTimeout(() => setIndex((i) => (i + 1) % validItems.length), 4000);
     return () => window.clearTimeout(timer);
-  }, [index, current, validItems.length]);
-  if (!current) return <div className="w-full max-w-sm mx-auto aspect-[9/16] max-h-[520px] border-2 border-dashed border-golden/50 flex items-center justify-center text-center p-6 font-mono text-sm text-muted-foreground">Add up to 10 images/videos using BRAND_HERO_MEDIA in Render Environment.</div>;
-  const content = current.type === "video" ? <video key={current.url} src={current.url} className="w-full h-full object-cover" autoPlay muted playsInline controls onEnded={() => setIndex((i) => (i + 1) % validItems.length)} /> : <img src={current.url} alt="Explore" className="w-full h-full object-cover" onError={() => setIndex((i) => (i + 1) % validItems.length)} />;
-  return <div className="w-full max-w-sm mx-auto aspect-[9/16] max-h-[520px] overflow-hidden border-2 border-golden shadow-[8px_8px_0_#D4AF37] relative bg-black">
-    {content}
-    <a href={current.link || "#"} target={current.link ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!current.link) e.preventDefault(); }} className="absolute bottom-0 inset-x-0 flex items-center justify-center gap-2 bg-black/80 text-[#D4AF37] font-black uppercase tracking-widest py-4">Explore <ExternalLink size={16} /></a>
-    {validItems.length > 1 && <div className="absolute top-3 right-3 bg-black/70 text-white text-xs font-mono px-2 py-1">{index + 1}/{validItems.length}</div>}
-  </div>;
+  }, [index, current?.url, current?.type, validItems.length]);
+
+  if (!current) return (
+    <div className="w-full max-w-2xl mx-auto aspect-video rounded-2xl border-8 border-[#D4AF37] bg-black shadow-[0_0_0_4px_#171717,0_14px_35px_rgba(0,0,0,0.45)] flex items-center justify-center text-center p-6 font-mono text-sm text-white">
+      Add up to 10 images/videos in the repository media folder and configure BRAND_HERO_MEDIA.
+    </div>
+  );
+
+  const next = () => setIndex((i) => (i + 1) % validItems.length);
+  const content = current.type === "video" ? (
+    <video key={current.url} src={current.url} className="absolute inset-0 w-full h-full object-contain bg-black" autoPlay muted playsInline controls onEnded={next} />
+  ) : (
+    <img key={current.url} src={current.url} alt="Explore" className="absolute inset-0 w-full h-full object-contain bg-black" onError={next} />
+  );
+
+  return (
+    <div className="w-full max-w-2xl mx-auto rounded-2xl border-[10px] border-[#D4AF37] p-1 bg-gradient-to-br from-[#FFF1A8] via-[#D4AF37] to-[#8A6815] shadow-[0_0_0_4px_#171717,0_14px_35px_rgba(0,0,0,0.45)]">
+      <div className="relative w-full aspect-video overflow-hidden rounded-lg bg-black">
+        {content}
+        <a href={current.link || "#"} target={current.link ? "_blank" : undefined} rel="noreferrer"
+          onClick={(e) => { if (!current.link) e.preventDefault(); }}
+          className="absolute bottom-0 inset-x-0 z-10 flex items-center justify-center gap-2 bg-gradient-to-r from-black/90 via-black/75 to-black/90 text-[#FFD95A] font-black uppercase tracking-widest py-3 border-t border-[#D4AF37]/70">
+          Explore <ExternalLink size={16} />
+        </a>
+        {validItems.length > 1 && <div className="absolute top-3 right-3 z-10 rounded-full border border-[#D4AF37] bg-black/80 text-white text-xs font-mono px-3 py-1">{index + 1}/{validItems.length}</div>}
+      </div>
+    </div>
+  );
 }
