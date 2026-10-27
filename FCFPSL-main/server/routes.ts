@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { ensureRegistrationSchema } from "./db";
 import { api, errorSchemas } from "@shared/routes";
 import { z } from "zod";
 import session from "express-session";
@@ -12,7 +13,7 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // Session setup for Admin Auth
+  // Ensure database schema exists before accepting registration requests.\n  await ensureRegistrationSchema();\n\n  // Session setup for Admin Auth
   app.set("trust proxy", 1);
   app.use(
     session({
@@ -87,7 +88,10 @@ export async function registerRoutes(
           field: err.errors[0].path.join('.'),
         });
       }
-      throw err;
+      console.error("Registration create failed:", err);
+      return res.status(500).json({
+        message: "Registration could not be saved. Please try again later."
+      });
     }
   });
 
