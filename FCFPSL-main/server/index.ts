@@ -17,6 +17,7 @@ app.get("/api/brand", (_req, res) => {
     contactAddress: process.env.BRAND_CONTACT_ADDRESS || "",
     programName: process.env.PROGRAM_NAME || "Student Registration Program",
     locationQrUrl: process.env.BRAND_LOCATION_QR_URL || "",
+    locationMapsUrl: process.env.BRAND_LOCATION_MAPS_URL || "",
     socialLinks: {
       whatsapp: process.env.BRAND_WHATSAPP_URL || "",
       youtube: process.env.BRAND_YOUTUBE_URL || "",
