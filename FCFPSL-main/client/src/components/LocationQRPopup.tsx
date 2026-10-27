@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
 import { X, MapPin, MessageCircle, Navigation } from "lucide-react";
-const qrCodeImage = (window as any).__BRAND_CONFIG__?.locationQrUrl || "";
 
 export function LocationQRPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const brandConfig = (window as any).__BRAND_CONFIG__ || {};
+  const locationQrUrl = brandConfig.locationQrUrl || "";
+  const contactAddress = brandConfig.contactAddress || "";
+  const contactPhone = brandConfig.contactPhone || "";
+  const mapsUrl = brandConfig.locationMapsUrl || "https://maps.google.com";
 
   useEffect(() => {
     const showPopup = () => {
       setIsOpen(true);
     };
 
-    const initialTimer = setTimeout(showPopup, 60000);
+    // Show the location card shortly after the page loads so it is not mistaken
+    // for a broken feature. It can be dismissed and will reappear every 10 minutes.
+    const initialTimer = setTimeout(showPopup, 10000);
     const intervalTimer = setInterval(showPopup, 10 * 60 * 1000);
 
     return () => {
@@ -19,7 +25,7 @@ export function LocationQRPopup() {
     };
   }, []);
 
-  if (!isOpen || !qrCodeImage) return null;
+  if (!isOpen || (!locationQrUrl && !contactAddress && !contactPhone)) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -42,29 +48,37 @@ export function LocationQRPopup() {
             Scan to Know the Location
           </p>
           
-          <div className="bg-white p-4 rounded-lg inline-block mb-4 shadow-inner">
-            <img 
-              src={qrCodeImage} 
-              alt="Scan for institute location" 
-              className="w-48 h-48 mx-auto"
-            />
-          </div>
+          {locationQrUrl ? (
+            <div className="bg-white p-4 rounded-lg inline-block mb-4 shadow-inner">
+              <img
+                src={locationQrUrl}
+                alt="Scan for institute location"
+                className="w-48 h-48 mx-auto object-contain"
+              />
+            </div>
+          ) : (
+            <div className="mb-4 rounded-lg bg-blue-50 p-4 text-blue-900">
+              <MapPin className="mx-auto mb-2 h-10 w-10" />
+              <p className="text-sm">Use the button below to open the institute location.</p>
+            </div>
+          )}
           
           <p className="text-sm text-muted-foreground font-mono mb-6">
-            {(window as any).__BRAND_CONFIG__?.contactAddress || ""}
+            {contactAddress}
           </p>
           
           <div className="flex flex-col gap-3">
             <a 
-              href={`https://wa.me/${((window as any).__BRAND_CONFIG__?.contactPhone || "").replace(/\D/g, "")}`} 
+              href={contactPhone ? `https://wa.me/${contactPhone.replace(/\D/g, "")}` : "#"} 
               target="_blank" 
               rel="noopener noreferrer"
+              onClick={(e) => { if (!contactPhone) e.preventDefault(); }}
               className="w-full bg-green-500 text-white font-bold py-3 px-6 uppercase text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
             >
               <MessageCircle className="w-5 h-5" /> Chat / Call Enquiry
             </a>
             <a
-              href="https://maps.app.goo.gl/2TLnVpjMRM3fTXBCA"
+              href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full bg-blue-600 text-white font-bold py-3 px-6 uppercase text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
