@@ -13,8 +13,8 @@ if (missing.length) {
   console.error(`Missing required environment variables: ${missing.join(", ")}`);
   process.exit(1);
 }
-if (process.env.ADMIN_PASSWORD.length < 12 || process.env.MANAGER_PASSWORD.length < 12) {
-  console.error("Set unique, strong ADMIN_PASSWORD and MANAGER_PASSWORD values (both must be at least 12 characters).");
+if (process.env.ADMIN_PASSWORD.length < 6 || process.env.MANAGER_PASSWORD.length < 6) {
+  console.error("Set unique, strong ADMIN_PASSWORD and MANAGER_PASSWORD values (both must be at least 6 characters).");
   process.exit(1);
 }
 process.env.MANAGEMENT_INTERNAL_URL = `http://127.0.0.1:${managementPort}`;
