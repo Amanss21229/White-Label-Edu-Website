@@ -5,9 +5,9 @@ import { Clock, MapPin, MessageCircle, User } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const ROUTINE_DATA = [
-  { class: "Class 4th - 8th", subjects: "Science, Mathematics, English Grammar", details: "Strong foundation building" },
-  { class: "Class 9th - 10th", subjects: "Science, Mathematics", details: "Board & Foundation focus" },
-  { class: "Class 11th, 12th & Dropper", subjects: "Complete Chemistry", details: "Organic, Inorganic, Physical (NEET/JEE/Boards)" },
+  { class: "Class 4th - 8th", subjects: "All Subjects", details: "Strong foundation building" },
+  { class: "Class 9th - 10th", subjects: "Science, Mathematics, AND All Subjects", details: "Board & Foundation focus" },
+  { class: "Class 11th, 12th & Dropper", subjects: "Physics, Chemistry, MATH, BIOLOGY", details: "BOARDS, NEET, JEE (EXAM FOCUSED STUDY)" },
 ];
 
 export default function ProgramDetails() {
@@ -51,16 +51,16 @@ export default function ProgramDetails() {
               </h2>
               <div className="space-y-6 font-mono text-lg">
                 <div className="p-4 bg-muted border-l-4 border-golden">
-                  <p className="font-bold">Dr. Manisha Kumari</p>
-                  <p className="text-sm text-muted-foreground">Science (Class 4-10) | Chemistry (Class 11, 12, Dropper)</p>
+                  <p className="font-bold">Ranjan Jaiswal</p>
+                  <p className="text-sm text-muted-foreground">Maths (Class 4-10) | Maths (Class 11, 12, Dropper)</p>
                 </div>
                 <div className="p-4 bg-muted border-l-4 border-golden">
                   <p className="font-bold">Aman Kumar</p>
-                  <p className="text-sm text-muted-foreground">Mathematics (Class 4-10)</p>
+                  <p className="text-sm text-muted-foreground">Science (Class 4-10)</p>
                 </div>
                 <div className="p-4 bg-muted border-l-4 border-golden">
-                  <p className="font-bold">Nisha Kumari</p>
-                  <p className="text-sm text-muted-foreground">English Grammar (Class 4-8)</p>
+                  <p className="font-bold">Ram Kumar</p>
+                  <p className="text-sm text-muted-foreground">English (Class 4-8)</p>
                 </div>
               </div>
               <div className="mt-8 p-6 bg-golden/10 border-2 border-golden font-bold text-center uppercase space-y-2">
