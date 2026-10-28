@@ -14,26 +14,26 @@ export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export const db = drizzle(pool, { schema });
 
 
-// Ensure the public registration table exists on fresh production databases.
-// This keeps registration working even when a deployment has not run drizzle-kit push.
+// Ensure the public registration table and all expected columns exist before accepting submissions.
+// The column names/types must match shared/schema.ts (Drizzle).
 export async function ensureRegistrationSchema() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS registrations (
       id SERIAL PRIMARY KEY,
-      student_name TEXT NOT NULL,
-      gender TEXT NOT NULL,
-      grade TEXT NOT NULL,
-      father_name TEXT NOT NULL,
-      mother_name TEXT NOT NULL,
-      whatsapp_number VARCHAR(15) NOT NULL,
-      parent_mobile_number VARCHAR(15) NOT NULL,
+      student_name TEXT,
+      gender TEXT,
+      grade TEXT,
+      father_name TEXT,
+      mother_name TEXT,
+      whatsapp_number VARCHAR(15),
+      parent_mobile_number VARCHAR(15),
       alternate_number VARCHAR(15),
-      address TEXT NOT NULL,
+      address TEXT,
       photo TEXT,
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
-  // Keep existing installations compatible with the registration model.
+
   await pool.query(`
     ALTER TABLE registrations
       ADD COLUMN IF NOT EXISTS student_name TEXT,

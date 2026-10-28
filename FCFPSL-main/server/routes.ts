@@ -13,7 +13,10 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // Ensure database schema exists before accepting registration requests.\n  await ensureRegistrationSchema();\n\n  // Session setup for Admin Auth
+  // Ensure database schema exists before accepting registration requests.
+  await ensureRegistrationSchema();
+
+  // Session setup for Admin Auth
   app.set("trust proxy", 1);
   app.use(
     session({
