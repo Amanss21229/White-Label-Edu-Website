@@ -35,6 +35,8 @@ services:
         value: ""
       - key: BRAND_LOCATION_MAPS_URL
         value: ""
+      - key: PUBLIC_BASE_URL
+        value: ""
       - key: PROGRAM_NAME
         value: "Student Registration Program"
 
