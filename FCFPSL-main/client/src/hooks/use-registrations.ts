@@ -84,14 +84,12 @@ export function useCreateRegistration() {
       });
 
       if (!res.ok) {
-        if (res.status === 400) {
-          const error = await res.json();
-          throw new Error(error.message || "Validation failed");
-        }
-        throw new Error("Failed to submit registration");
+        const error = await res.json().catch(() => ({} as { message?: string; error?: string }));
+        throw new Error(error.message || error.error || `Registration failed (${res.status})`);
       }
-      
-      return api.registrations.create.responses[201].parse(await res.json());
+
+      const payload = await res.json();
+      return api.registrations.create.responses[201].parse(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.registrations.list.path] });
