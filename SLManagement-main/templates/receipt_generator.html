@@ -123,7 +123,7 @@ function loadStudentFees(studentId) {
     document.getElementById('generateSection').style.display = 'none';
     selectedFeeIds.clear();
 
-    fetch(`/api/student-fee-months/${studentId}`)
+    fetch(`/management/api/student-fee-months/${studentId}`)
         .then(async r => {
             const data = await r.json().catch(() => ({}));
             if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
