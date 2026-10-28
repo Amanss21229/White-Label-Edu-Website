@@ -30,7 +30,13 @@ app.get("/api/brand", (_req, res) => {
 app.use("/management", createProxyMiddleware({
   target: process.env.MANAGEMENT_INTERNAL_URL || "http://127.0.0.1:5001",
   changeOrigin: true, pathRewrite: { "^/management": "" },
-  on: { proxyReq: (proxyReq) => proxyReq.setHeader("X-Script-Name", "/management") }
+  on: {
+    proxyReq: (proxyReq, req) => {
+      proxyReq.setHeader("X-Script-Name", "/management");
+      proxyReq.setHeader("X-Forwarded-Host", req.headers.host || "");
+      proxyReq.setHeader("X-Forwarded-Proto", (req.headers["x-forwarded-proto"] as string) || "https");
+    }
+  }
 }));
 
 declare module "http" {

@@ -33,4 +33,19 @@ export async function ensureRegistrationSchema() {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  // Keep existing installations compatible with the registration model.
+  await pool.query(`
+    ALTER TABLE registrations
+      ADD COLUMN IF NOT EXISTS student_name TEXT,
+      ADD COLUMN IF NOT EXISTS gender TEXT,
+      ADD COLUMN IF NOT EXISTS grade TEXT,
+      ADD COLUMN IF NOT EXISTS father_name TEXT,
+      ADD COLUMN IF NOT EXISTS mother_name TEXT,
+      ADD COLUMN IF NOT EXISTS whatsapp_number VARCHAR(15),
+      ADD COLUMN IF NOT EXISTS parent_mobile_number VARCHAR(15),
+      ADD COLUMN IF NOT EXISTS alternate_number VARCHAR(15),
+      ADD COLUMN IF NOT EXISTS address TEXT,
+      ADD COLUMN IF NOT EXISTS photo TEXT,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW()
+  `);
 }
