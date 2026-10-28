@@ -27,6 +27,16 @@ app = Flask(__name__)
 if not os.environ.get('SESSION_SECRET'):
     raise RuntimeError("SESSION_SECRET environment variable must be set for security. Please add it to Replit Secrets.")
 app.secret_key = os.environ.get('SESSION_SECRET')
+
+def public_management_url(path):
+    """Build a browser-facing URL for Flask routes served behind Node's /management proxy."""
+    from urllib.parse import urljoin
+    scheme = request.headers.get('X-Forwarded-Proto', request.scheme).split(',')[0].strip()
+    host = request.headers.get('X-Forwarded-Host', request.host).split(',')[0].strip()
+    clean_path = path if path.startswith('/') else '/' + path
+    if not clean_path.startswith('/management/'):
+        clean_path = '/management' + clean_path
+    return f"{scheme}://{host}{clean_path}"
 BRAND_NAME = os.environ.get("BRAND_NAME", "Your Institute")
 BRAND_TAGLINE = os.environ.get("BRAND_TAGLINE", "Student Management")
 BRAND_LOGO_URL = os.environ.get("BRAND_LOGO_URL", "/branding/logo.png")
@@ -581,10 +591,12 @@ def registration_success(student_id):
     conn.close()
     
     token = generate_pdf_token(student['admission_number'])
-    profile_pdf_url = url_for('public_student_profile', 
-                              admission_number=student['admission_number'], 
-                              token=token, 
-                              _external=True)
+    profile_pdf_url = public_management_url(url_for(
+        'public_student_profile',
+        admission_number=student['admission_number'],
+        token=token,
+        _external=False
+    ))
     
     whatsapp_url = build_registration_whatsapp_url(
         student['mobile1'],
