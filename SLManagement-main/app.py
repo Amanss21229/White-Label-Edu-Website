@@ -27,16 +27,6 @@ app = Flask(__name__)
 if not os.environ.get('SESSION_SECRET'):
     raise RuntimeError("SESSION_SECRET environment variable must be set for security. Please add it to Replit Secrets.")
 app.secret_key = os.environ.get('SESSION_SECRET')
-
-def public_management_url(path):
-    """Build a browser-facing URL for Flask routes served behind Node's /management proxy."""
-    from urllib.parse import urljoin
-    scheme = request.headers.get('X-Forwarded-Proto', request.scheme).split(',')[0].strip()
-    host = request.headers.get('X-Forwarded-Host', request.host).split(',')[0].strip()
-    clean_path = path if path.startswith('/') else '/' + path
-    if not clean_path.startswith('/management/'):
-        clean_path = '/management' + clean_path
-    return f"{scheme}://{host}{clean_path}"
 BRAND_NAME = os.environ.get("BRAND_NAME", "Your Institute")
 BRAND_TAGLINE = os.environ.get("BRAND_TAGLINE", "Student Management")
 BRAND_LOGO_URL = os.environ.get("BRAND_LOGO_URL", "/branding/logo.png")
@@ -83,6 +73,26 @@ def verify_pdf_token(admission_number, token):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def public_url_for(endpoint, **values):
+    """Build public URLs behind the Node /management reverse proxy."""
+    path = url_for(endpoint, **values)
+    public_base = (os.environ.get('PUBLIC_BASE_URL') or '').strip().rstrip('/')
+    if public_base:
+        return public_base + '/management' + (path if path.startswith('/') else '/' + path)
+    forwarded_host = (request.headers.get('X-Forwarded-Host') or request.host).split(',')[0].strip()
+    forwarded_proto = (request.headers.get('X-Forwarded-Proto') or request.scheme).split(',')[0].strip()
+    prefix = request.headers.get('X-Script-Name', '/management').rstrip('/') or '/management'
+    return f"{forwarded_proto}://{forwarded_host}{prefix}{path if path.startswith('/') else '/' + path}"
+
+
+def pdf_brand_address():
+    return os.environ.get('BRAND_CONTACT_ADDRESS', '').strip()
+
+
+def pdf_brand_phone():
+    return os.environ.get('BRAND_CONTACT_PHONE', '').strip()
+
 
 def get_db():
     conn = psycopg2.connect(DATABASE_URL)
@@ -591,12 +601,9 @@ def registration_success(student_id):
     conn.close()
     
     token = generate_pdf_token(student['admission_number'])
-    profile_pdf_url = public_management_url(url_for(
-        'public_student_profile',
-        admission_number=student['admission_number'],
-        token=token,
-        _external=False
-    ))
+    profile_pdf_url = public_url_for('public_student_profile',
+                                   admission_number=student['admission_number'],
+                                   token=token)
     
     whatsapp_url = build_registration_whatsapp_url(
         student['mobile1'],
@@ -1002,8 +1009,8 @@ def generate_receipt(student_id, fee_id):
     c.drawCentredString(width/2, height - 110, BRAND_NAME)
     
     c.setFont("Helvetica", 10)
-    c.drawCentredString(width/2, height - 130, institute['address'])
-    c.drawCentredString(width/2, height - 145, f"Contact: {institute['contact']}")
+    c.drawCentredString(width/2, height - 130, pdf_brand_address())
+    c.drawCentredString(width/2, height - 145, f"Contact: {pdf_brand_phone()}")
     
     c.setFont("Helvetica-Bold", 16)
     c.drawCentredString(width/2, height - 175, "FEE RECEIPT")
@@ -1120,8 +1127,8 @@ def generate_demand_bill(student_id):
     c.drawCentredString(width/2, height - 110, BRAND_NAME)
     
     c.setFont("Helvetica", 10)
-    c.drawCentredString(width/2, height - 130, institute['address'])
-    c.drawCentredString(width/2, height - 145, f"Contact: {institute['contact']}")
+    c.drawCentredString(width/2, height - 130, pdf_brand_address())
+    c.drawCentredString(width/2, height - 145, f"Contact: {pdf_brand_phone()}")
     
     c.setFont("Helvetica-Bold", 16)
     c.drawCentredString(width/2, height - 175, "FEE DEMAND NOTICE")
@@ -1258,8 +1265,8 @@ def public_demand_bill(admission_number, token):
     c.drawCentredString(width/2, height - 110, BRAND_NAME)
     
     c.setFont("Helvetica", 10)
-    c.drawCentredString(width/2, height - 130, institute['address'] if institute else '')
-    c.drawCentredString(width/2, height - 145, f"Contact: {institute['contact']}" if institute else '')
+    c.drawCentredString(width/2, height - 130, pdf_brand_address())
+    c.drawCentredString(width/2, height - 145, f"Contact: {pdf_brand_phone()}" if pdf_brand_phone() else '')
     
     c.setFont("Helvetica-Bold", 16)
     c.drawCentredString(width/2, height - 175, "FEE DEMAND NOTICE")
@@ -1397,8 +1404,8 @@ def public_receipt(admission_number, fee_id, token):
     c.drawCentredString(width/2, height - 110, BRAND_NAME)
     
     c.setFont("Helvetica", 10)
-    c.drawCentredString(width/2, height - 130, institute['address'] if institute else '')
-    c.drawCentredString(width/2, height - 145, f"Contact: {institute['contact']}" if institute else '')
+    c.drawCentredString(width/2, height - 130, pdf_brand_address())
+    c.drawCentredString(width/2, height - 145, f"Contact: {pdf_brand_phone()}" if pdf_brand_phone() else '')
     
     c.setFont("Helvetica-Bold", 16)
     c.drawCentredString(width/2, height - 175, "FEE RECEIPT")
@@ -1512,8 +1519,8 @@ def public_student_profile(admission_number, token):
     
     c.setFont("Helvetica", 10)
     if institute:
-        c.drawCentredString(width/2, height - 68, institute['address'] or '')
-        c.drawCentredString(width/2, height - 82, f"Contact: {institute['contact']}" if institute['contact'] else '')
+        c.drawCentredString(width/2, height - 68, pdf_brand_address())
+        c.drawCentredString(width/2, height - 82, f"Contact: {pdf_brand_phone()}" if pdf_brand_phone() else '')
     
     y = height - 110
     c.setStrokeColorRGB(0.2, 0.4, 0.6)
@@ -2286,8 +2293,8 @@ def create_manager_receipt():
     c.drawCentredString(w / 2, h - 110, BRAND_NAME)
     c.setFont("Helvetica", 10)
     if institute:
-        c.drawCentredString(w / 2, h - 130, institute['address'] or '')
-        c.drawCentredString(w / 2, h - 145, f"Contact: {institute['contact']}" if institute['contact'] else '')
+        c.drawCentredString(w / 2, h - 130, pdf_brand_address())
+        c.drawCentredString(w / 2, h - 145, f"Contact: {pdf_brand_phone()}" if pdf_brand_phone() else '')
     c.setFont("Helvetica-Bold", 16)
     c.drawCentredString(w / 2, h - 175, "FEE RECEIPT")
 
