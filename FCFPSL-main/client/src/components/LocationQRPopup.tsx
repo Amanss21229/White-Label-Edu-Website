@@ -4,10 +4,16 @@ import { X, MapPin, MessageCircle, Navigation } from "lucide-react";
 export function LocationQRPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const brandConfig = (window as any).__BRAND_CONFIG__ || {};
-  const locationQrUrl = brandConfig.locationQrUrl || "";
+  const rawQrUrl = brandConfig.locationQrUrl || "";
+  const locationQrUrl = rawQrUrl
+    .replace(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/i, "https://raw.githubusercontent.com/$1/$2/$3/$4")
+    .replace(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.+)$/i, "https://raw.githubusercontent.com/$1/$2/$3/$4");
   const contactAddress = brandConfig.contactAddress || "";
   const contactPhone = brandConfig.contactPhone || "";
-  const mapsUrl = brandConfig.locationMapsUrl || "https://maps.google.com";
+  const configuredMapsUrl = (brandConfig.locationMapsUrl || "").trim();
+  const mapsUrl = configuredMapsUrl && !/^https?:\/\//i.test(configuredMapsUrl)
+    ? `https://${configuredMapsUrl}`
+    : configuredMapsUrl;
 
   useEffect(() => {
     const showPopup = () => {
@@ -54,7 +60,15 @@ export function LocationQRPopup() {
                 src={locationQrUrl}
                 alt="Scan for institute location"
                 className="w-48 h-48 mx-auto object-contain"
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                  const fallback = event.currentTarget.parentElement?.querySelector("[data-qr-fallback]") as HTMLElement | null;
+                  if (fallback) fallback.style.display = "block";
+                }}
               />
+              <p data-qr-fallback style={{ display: "none" }} className="text-sm text-red-700 max-w-48">
+                QR image could not be loaded. Set BRAND_LOCATION_QR_URL to a direct image URL (raw GitHub URL).
+              </p>
             </div>
           ) : (
             <div className="mb-4 rounded-lg bg-blue-50 p-4 text-blue-900">
@@ -78,9 +92,10 @@ export function LocationQRPopup() {
               <MessageCircle className="w-5 h-5" /> Chat / Call Enquiry
             </a>
             <a
-              href={mapsUrl}
+              href={mapsUrl || undefined}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(event) => { if (!mapsUrl) { event.preventDefault(); alert("Institute map URL is not configured. Set BRAND_LOCATION_MAPS_URL in Render."); } }}
               className="w-full bg-blue-600 text-white font-bold py-3 px-6 uppercase text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
               <Navigation className="w-5 h-5" /> Open in Google Maps
